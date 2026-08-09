@@ -355,4 +355,14 @@ Score=83.6  |  Hour=8.0  Atte=90.0  Prev=76.0  Assi=8.0
 
 ---
 
+##  Design Decisions
 
+### TSP Planner
+- **Bidirectional dict** `{(A,B): d, (B,A): d}` gives O(1) distance lookup regardless of argument order.
+- **Start city is pinned** to index 0, reducing search space from n! to (n−1)! without affecting correctness.
+- **Live distance sync** — entries update the dict on every keystroke via `StringVar.trace_add`.
+
+### Score Predictor
+- **StandardScaler** is fit only on training data and then applied to test/prediction data, preventing data leakage.
+- **Predictions are clipped** to [0, 100] because linear models can extrapolate beyond physical bounds.
+- **Modular `StudentModel` class** separates all ML logic from the GUI — the regression algorithm can be swapped in one line.
